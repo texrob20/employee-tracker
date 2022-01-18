@@ -6,16 +6,17 @@ const inputCheck = require('../../utils/inputCheck');
 // Get all candidates
 router.get('/employees', (req, res) => {
     const sql = `SELECT employees.*, roles.title, roles.salary 
-             AS role_name, salary 
+             AS salary 
              FROM employees 
              LEFT JOIN roles 
-             ON employees.roles_id = roles.id`;
+             ON employees.role_id = roles.id`;
   
     db.query(sql, (err, rows) => {
       if (err) {
         res.status(500).json({ error: err.message });
         return;
       }
+      console.table(rows);
       res.json({
         message: 'success',
         data: rows
@@ -25,12 +26,12 @@ router.get('/employees', (req, res) => {
 
 // Get a single candidate
 router.get('/employee/:id', (req, res) => {
-    const sql = `SELECT employees.*, roles.name, roles.salary 
-             AS role_name, salary 
+    const sql = `SELECT employees.*, roles.title, roles.salary 
+             AS salary 
              FROM employees 
-             LEFT JOIN roless 
-             ON employees.roles_id = roles.id 
-             WHERE employee.id = ?`;
+             LEFT JOIN roles 
+             ON employees.role_id = roles.id 
+             WHERE employees.id = ?`;
     const params = [req.params.id];
   
     db.query(sql, params, (err, row) => {
