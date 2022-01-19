@@ -1,27 +1,54 @@
-const express = require('express');
-
-const inputCheck = require('./utils/inputCheck');
+const cTable = require('console.table');
 const db = require('./db/connection');
-const apiRoutes = require('./routes/apiRoutes');
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use('/api', apiRoutes);
-
-
-  // Default response for any other request (Not Found)
-app.use((req, res) => {
-    res.status(404).end();
-  });
+const dept = requre('./utils/department');
+const roles = require('./utils/roles');
+const employees = require('.utils/employees');
 
 // Start server after DB connection
 db.connect(err => {
     if (err) throw err;
     console.log('Database connected.');
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  });
+    console.log ("Welcome to the employee tracker database.");  
+});
+
+const promptUser = () => {
+  inquirer.prompt ([{
+    type: 'list',
+    message: "Please select which you would like to do.",
+    choices: ['View departments', 
+              'View roles', 
+              'View employees', 
+              'Add a department', 
+              'Add a role', 
+              'Add an employee', 
+              'Update an employee role',
+              'End session.'],
+    name: 'choice'
+  }])
+  .then((answer) => {
+  if (answer === 'View departments') {
+    showDepartments();
+    promptUser();
+  } else if (answer === 'View roles') {
+    showRoles();
+    promptUser();
+  } else if (answer === 'View employees') {
+    showEmployees();
+    promptUser();
+  } else if (answer === 'Add a department') {
+    addDepartment();
+    promptUser();
+  } else if (answer === 'Add a role') {
+    addRole();
+    promptUser();
+  } else if (answer === 'Add an employee') {
+    addEmployee();
+    promptUser();
+  } else if (answer ==='Update an employee') {
+    updateEmployee();
+    promptUser();
+  };
+  })
+};
+
+promptUser();
