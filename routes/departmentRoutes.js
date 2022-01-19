@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../db/connection');
 const inputCheck = require('../../utils/inputCheck');
 
-router.get('/department', (req, res) => {
+router.get('/departments', (req, res) => {
     const sql = `SELECT * FROM department`;
     db.query(sql, (err, rows) => {
       if (err) {
