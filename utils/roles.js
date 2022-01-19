@@ -1,15 +1,15 @@
-const db = require('../../db/connection');
+const db = require('../db/connection');
 const cTable = require('console.table');
 
-showDepartments = () => {
+showRoles = () => {
 console.log ('Roles:');
 const sql = 'SELECT * FROM roles';
-db.promise().query(sql, (err, rows) => {
+db.query(sql, (err, rows) => {
     if (err) {
         res.status(500).json({ error: err.message });
         return;
       }
-    console.table(rows);  
+    cTable(rows);  
   })
 }
 

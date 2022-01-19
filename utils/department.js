@@ -1,19 +1,23 @@
-const db = require('../../db/connection');
+const db = require('../db/connection');
+const promise = require('mysql2/promise');
 const cTable = require('console.table');
+const rtn = require('../server');
 
-showDepartments = () => {
-console.log ('Departments:');
-const sql = 'SELECT * FROM department';
-db.promise().query(sql, (err, rows) => {
-    if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-    console.table(rows);  
+async function showDepartments() {
+  console.log ('Departments:');
+  const sql = `SELECT department.id AS id, department.name AS department FROM department`;
+  await promise (db.query(sql, (err, rows) => {
+      if (err) throw err;
+      console.table(rows);  
+    })
+  )
+  .then ((res) => {
+    return;
   })
 }
+  
 
-addDepartment = () => {
+function addDepartment () {
   inquirer.prompt ([{
     type: 'input',
     message: "Please provide the name of the new department.",
@@ -38,4 +42,6 @@ addDepartment = () => {
   })
 };
 
-module.exports = {showDepartments, addDepartment};
+module.exports = {
+  showDepartments, 
+  addDepartment};

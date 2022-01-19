@@ -1,10 +1,11 @@
-const db = require('../../db/connection');
+const db = require('../db/connection');
 const cTable = require('console.table');
+const inquirer = require('inquirer');
 
 showEmployees = () => {
 console.log ('Employees:');
 const sql = 'SELECT * FROM employees';
-db.promise().query(sql, (err, rows) => {
+db.query(sql, (err, rows) => {
     if (err) {
         res.status(500).json({ error: err.message });
         return;
@@ -69,7 +70,47 @@ addEmployee = () => {
 };
 
 updateEmployee = () => {
-
+  const empSql = 'SELECT * FROM employees';
+  db.promise().query(empSql, (err, rows) => {
+      if (err) {
+          res.status(500).json({ error: err.message });
+          return;
+        }
+  const employeeList = data.map(({ id, first_name, last_name }) => ({ first_name, last_name, value: id }));   
+  const roleSql = 'SELECT * FROM roles';
+  db.promise().query(roleSql, (err, rows) => {
+      if (err) {
+          res.status(500).json({ error: err.message });
+          return;
+        }
+  const roleList = data.map(({ id, title }) => ({ title, value: id }));
+  inquirer.prompt([
+    {
+        type: 'list',
+        name: 'name',
+        message: "Select the employee to update",
+        choices: employeeList
+    },
+    {
+        type: 'list',
+        name: 'title',
+        message: "Select the employee's new title",
+        choices: roleList
+    }
+  ])
+})
+  .then(answer => {
+  const newRole = answer.title.value;    
+  const sql = "UPDATE employee SET role_id WHERE id = ?";
+  db.query(sql, newRole, (err, rows) => {
+    if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+    console.log(answer.first_name + ' has been updated.');  
+  });
+  })
+})
 };
 
 module.exports = {showEmployees, addEmployee, updateEmployee};
