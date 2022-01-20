@@ -20,6 +20,7 @@ async function promptUser () {
               'Add a role', 
               'Add an employee', 
               'Update an employee role',
+              'Update an employee manager',
               'Delete a department',
               'Delete a role',
               'Remove an employee',
@@ -63,6 +64,11 @@ async function promptUser () {
     .then(res => {
       promptUser();
     });
+  } else if (answer.choice ==='Update an employee manager') {
+    employees.updateManager() 
+    .then(res => {
+      promptUser();
+    });    
   } else if (answer.choice ==='Delete a department') {
     dept.deleteDepartment()
     .then(res => {

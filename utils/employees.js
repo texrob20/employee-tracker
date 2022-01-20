@@ -109,6 +109,36 @@ async function updateEmployee () {
   });
 };
 
+// user can input employee ID and update their role using the role ID
+async function updateManager () {
+    await inquirer.prompt([
+      {
+          type: 'input',
+          message: "Please provide the employee ID of the employee.",
+          name: 'id',
+          validate: function (ans) {
+            if (ans) { return true;
+            } else { return console.log("Please enter an employee ID."); }
+          }
+      },
+      {
+          type: 'input',
+          message: "Please provide the new manager ID of the employee.",
+          name: 'manager_id',
+          validate: function (ans) {
+            if (ans) { return true;
+            } else { return console.log("Please enter a manager ID."); }
+          }
+      }
+    ])
+    .then(answer => { 
+      const sql = "UPDATE employees SET manager_id = ? WHERE id = ?";
+      const params = [answer.manager_id, answer.id];
+      query1(sql, params);
+      console.log("The employee's manager has been updated.");  
+    });
+  };
+
 // user can provide the ID of the employee to remove from the database
 async function deleteEmployee () {
   await inquirer.prompt([
@@ -137,4 +167,5 @@ async function deleteEmployee () {
 module.exports = {showEmployees, 
                   addEmployee, 
                   updateEmployee,
+                  updateManager,
                   deleteEmployee};
