@@ -5,6 +5,7 @@ const cTable = require('console.table');
 // node native promisify
 const query1 = util.promisify(db.query).bind(db);
 
+// function that displays the roles and includes the name of the department
 async function showRoles() {
 console.log ('Roles:\n');
 try {
@@ -19,6 +20,7 @@ try {
   }
 }  
 
+// user inputs title, salary, and department ID for new role to be added to database
 async function addRole () {
     await inquirer.prompt ([
         {

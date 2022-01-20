@@ -1,13 +1,14 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const db = require('./db/connection');
-const dept = require('./utils/department');
-const roles = require('./utils/roles');
-const employees = require('./utils/employees');
+const db = require('./db/connection'); //creates database connection
+const dept = require('./utils/department'); //module providing all department requests
+const roles = require('./utils/roles'); //module providing all roles requests
+const employees = require('./utils/employees'); //module providing all employees requests
 const mysql = require('mysql2');
 const { append } = require('express/lib/response');
 const e = require('express');
 
+// function that prompts user to select an option
 async function promptUser () {  
   inquirer.prompt ([{
     type: 'list',
@@ -23,10 +24,9 @@ async function promptUser () {
     name: 'choice'
   }])
 .then(answer => {
-  console.log('choosing...'+ answer.choice);
+  // determines which function to execute based on user selection
   if (answer.choice === 'View departments') {
-    dept.showDepartments()
-    //setTimeout(promptUser(), 4*1000);
+    dept.showDepartments() 
     .then(res => {
       promptUser();
     });
@@ -62,7 +62,7 @@ async function promptUser () {
     });
   } else if (answer.choice === 'End session.'){
       db.end();
-      process.exit;
+      process.exit;  //exits the app
   }})
 };
 

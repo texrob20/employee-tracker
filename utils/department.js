@@ -5,6 +5,7 @@ const cTable = require('console.table');
 // node native promisify
 const query1 = util.promisify(db.query).bind(db);
 
+// function that displays the current list of departments
 async function showDepartments() {
   console.log ('Departments:\n');
   try {
@@ -17,6 +18,7 @@ async function showDepartments() {
   }
 }  
 
+// user can provide the name of a new department to add to the database
 async function addDepartment () {
   await inquirer.prompt([
     {

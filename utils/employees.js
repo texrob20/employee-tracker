@@ -5,6 +5,7 @@ const cTable = require('console.table');
 // node native promisify
 const query1 = util.promisify(db.query).bind(db);
 
+// function that displays the employees and includes information about their roles and dept
 async function showEmployees() {
 console.log ('Employees:');
 try {
@@ -23,10 +24,11 @@ try {
   console.table(rows);  
   console.log(' ');
   } finally {
-   setTimeout(() => {}, 10000);
+   return true;
   }
 }  
 
+// user inputs first name, last name, role ID, and manger ID to add new employee to db
 async function addEmployee() {
     await inquirer.prompt ([
         {
@@ -77,11 +79,12 @@ async function addEmployee() {
     })
 };
 
+// user can input employee ID and update their role using the role ID
 async function updateEmployee () {
   await inquirer.prompt([
     {
         type: 'input',
-        message: "Please provide the role ID of the new employee.",
+        message: "Please provide the employee ID of the employee.",
         name: 'id',
         validate: function (ans) {
           if (ans) { return true;
@@ -101,7 +104,6 @@ async function updateEmployee () {
   .then(answer => { 
     const sql = "UPDATE employees SET role_id = ? WHERE id = ?";
     const params = [answer.role_id, answer.id];
-    console.log(params);
     query1(sql, params);
     console.log('The employee has been updated.');  
   });
