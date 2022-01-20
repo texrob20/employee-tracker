@@ -20,6 +20,9 @@ async function promptUser () {
               'Add a role', 
               'Add an employee', 
               'Update an employee role',
+              'Delete a department',
+              'Delete a role',
+              'Remove an employee',
               'End session.'],
     name: 'choice'
   }])
@@ -60,6 +63,21 @@ async function promptUser () {
     .then(res => {
       promptUser();
     });
+  } else if (answer.choice ==='Delete a department') {
+    dept.deleteDepartment()
+    .then(res => {
+      promptUser();
+    });
+  } else if (answer.choice ==='Delete a role') {
+    roles.deleteRole()
+    .then(res => {
+      promptUser();
+    });
+  } else if (answer.choice ==='Remove an employee') {
+    employees.deleteEmployee()
+    .then(res => {
+      promptUser();
+    });    
   } else if (answer.choice === 'End session.'){
       db.end();
       process.exit;  //exits the app

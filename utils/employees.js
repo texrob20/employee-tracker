@@ -109,4 +109,32 @@ async function updateEmployee () {
   });
 };
 
-module.exports = {showEmployees, addEmployee, updateEmployee};
+// user can provide the ID of the employee to remove from the database
+async function deleteEmployee () {
+  await inquirer.prompt([
+    {
+      type: 'input', 
+      name: 'id',
+      message: "Provide the ID of the employee to remove?",
+      validate: name => {
+        if (name) {
+            return true;
+        } else {
+            console.log('Please enter an employee ID');
+            return false;
+        }
+      }
+    }
+  ])
+  .then(answer => {
+    const sql = `DELETE FROM employees WHERE id = ?`
+    const rows = query1(sql, answer.id);
+    console.log('Deleted the employee.');  
+    return answer;
+  });
+};
+
+module.exports = {showEmployees, 
+                  addEmployee, 
+                  updateEmployee,
+                  deleteEmployee};

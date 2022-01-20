@@ -67,4 +67,31 @@ async function addRole () {
     })
 };
 
-module.exports = {showRoles, addRole};
+// user can provide the ID of the role to delete from the database
+async function deleteRole () {
+  await inquirer.prompt([
+    {
+      type: 'input', 
+      name: 'id',
+      message: "Provide the ID of the role to delete?",
+      validate: name => {
+        if (name) {
+            return true;
+        } else {
+            console.log('Please enter a role ID');
+            return false;
+        }
+      }
+    }
+  ])
+  .then(answer => {
+    const sql = `DELETE FROM roles WHERE id = ?`
+    const rows = query1(sql, answer.id);
+    console.log('Deleted the role.');  
+    return answer;
+  });
+};
+
+module.exports = {showRoles, 
+                  addRole,
+                  deleteRole};

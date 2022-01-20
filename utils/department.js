@@ -44,6 +44,32 @@ async function addDepartment () {
   });
 };
 
+// user can provide the ID of the department to delete from the database
+async function deleteDepartment () {
+  await inquirer.prompt([
+    {
+      type: 'input', 
+      name: 'id',
+      message: "Provide the ID of the department to delete?",
+      validate: name => {
+        if (name) {
+            return true;
+        } else {
+            console.log('Please enter a department ID');
+            return false;
+        }
+      }
+    }
+  ])
+  .then(answer => {
+    const sql = `DELETE FROM department WHERE id = ?`
+    const rows = query1(sql, answer.id);
+    console.log('Deleted the department.');  
+    return answer;
+  });
+};
+
 module.exports = {
   showDepartments, 
-  addDepartment};
+  addDepartment,
+  deleteDepartment};
