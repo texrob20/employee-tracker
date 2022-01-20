@@ -1,21 +1,24 @@
-const db = require('../db/connection');
-const cTable = require('console.table');
 const inquirer = require('inquirer');
+const db = require('../db/connection');
+const util = require('util');
+const cTable = require('console.table');
+// node native promisify
+const query1 = util.promisify(db.query).bind(db);
 
-showEmployees = () => {
+async function showEmployees() {
 console.log ('Employees:');
-const sql = 'SELECT * FROM employees';
-db.query(sql, (err, rows) => {
-    if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-    console.table(rows);  
-  })
-}
+try {
+  const sql = 'SELECT * FROM employees';
+  const rows = await query1(sql);
+  console.table(rows);  
+  console.log(' ');
+  } finally {
+   setTimeout(() => {}, 10000);
+  }
+}  
 
-addEmployee = () => {
-    inquirer.prompt ([
+async function addEmployee() {
+    await inquirer.prompt ([
         {
         type: 'input',
         message: "Please provide the first name of the new employee.",
@@ -25,8 +28,8 @@ addEmployee = () => {
                 return true;
             } else {
                return console.log("Please enter a name.");
-            }}
-        }, 
+            }
+        }}, 
         {   
         type: 'input',
         message: "Please provide the last name of the new employee.",
@@ -36,20 +39,19 @@ addEmployee = () => {
                 return true;
             } else {
                 return console.log("Please enter a name.");
-            }},
-        },
+            }
+        }},
         {
         type: 'input',
         message: "Please provide the role ID of the new employee.",
-        name: 'role-id',
+        name: 'role_id',
         validate: function (ans) {
             if (ans) {
                 return true;
             } else {
                 return console.log("Please enter a role ID.");
-            }},
-
-        },
+            }
+        }},
         {
         type: 'input',
         message: "Please provide the manager ID of the new employee.",
@@ -59,58 +61,40 @@ addEmployee = () => {
     .then (answer => {
       const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
                  VALUES (?,?,?,?)`;
-      db.query(sql, answer.title, answer.first_name, answer.last_name, answer.role_id, answer.manager_id, (err, results) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      console.log('Added ' + answer.first_name +' '+ answer.last_name + ' to roles.');  
+      const params = [answer.first_name, answer.last_name, answer.role_id, answer.manager_id];     
+      query1(sql, params);
+      console.log('Added ' + answer.first_name +' '+ answer.last_name + ' to employees.');  
     })
-  })
 };
 
-updateEmployee = () => {
-  const empSql = 'SELECT * FROM employees';
-  db.promise().query(empSql, (err, rows) => {
-      if (err) {
-          res.status(500).json({ error: err.message });
-          return;
-        }
-  const employeeList = data.map(({ id, first_name, last_name }) => ({ first_name, last_name, value: id }));   
-  const roleSql = 'SELECT * FROM roles';
-  db.promise().query(roleSql, (err, rows) => {
-      if (err) {
-          res.status(500).json({ error: err.message });
-          return;
-        }
-  const roleList = data.map(({ id, title }) => ({ title, value: id }));
-  inquirer.prompt([
+async function updateEmployee () {
+  await inquirer.prompt([
     {
-        type: 'list',
-        name: 'name',
-        message: "Select the employee to update",
-        choices: employeeList
+        type: 'input',
+        message: "Please provide the role ID of the new employee.",
+        name: 'id',
+        validate: function (ans) {
+          if (ans) { return true;
+          } else { return console.log("Please enter an employee ID."); }
+        }
     },
     {
-        type: 'list',
-        name: 'title',
-        message: "Select the employee's new title",
-        choices: roleList
+        type: 'input',
+        message: "Please provide the new role ID of the employee.",
+        name: 'role_id',
+        validate: function (ans) {
+          if (ans) { return true;
+          } else { return console.log("Please enter a role ID."); }
+        }
     }
   ])
-})
-  .then(answer => {
-  const newRole = answer.title.value;    
-  const sql = "UPDATE employee SET role_id WHERE id = ?";
-  db.query(sql, newRole, (err, rows) => {
-    if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-    console.log(answer.first_name + ' has been updated.');  
+  .then(answer => { 
+    const sql = "UPDATE employees SET role_id = ? WHERE id = ?";
+    const params = [answer.role_id, answer.id];
+    console.log(params);
+    query1(sql, params);
+    console.log('The employee has been updated.');  
   });
-  })
-})
 };
 
 module.exports = {showEmployees, addEmployee, updateEmployee};

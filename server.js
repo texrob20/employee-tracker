@@ -5,15 +5,10 @@ const dept = require('./utils/department');
 const roles = require('./utils/roles');
 const employees = require('./utils/employees');
 const mysql = require('mysql2');
+const { append } = require('express/lib/response');
+const e = require('express');
 
-// Start server after DB connection
-db.connect(err => {
-    if (err) throw err;
-    console.log ("Welcome to the employee tracker database.");
-    promptUser();  
-});
-
-function promptUser () {  
+async function promptUser () {  
   inquirer.prompt ([{
     type: 'list',
     message: "Please select which you would like to do.",
@@ -27,42 +22,55 @@ function promptUser () {
               'End session.'],
     name: 'choice'
   }])
-  .then((answer) => {
+.then(answer => {
+  console.log('choosing...'+ answer.choice);
   if (answer.choice === 'View departments') {
     dept.showDepartments()
-
+    //setTimeout(promptUser(), 4*1000);
+    .then(res => {
+      promptUser();
+    });
   } else if (answer.choice === 'View roles') {
-    roles.showRoles();
-    promptUser();
+    roles.showRoles()
+    .then(res => {
+      promptUser();
+    });
   } else if (answer.choice === 'View employees') {
-    employees.showEmployees();
-    promptUser();
+    employees.showEmployees()
+    .then(res => {
+      promptUser();
+    });
   } else if (answer.choice === 'Add a department') {
-    dept.addDepartment();
-    promptUser();
+    dept.addDepartment()
+    .then(res => {
+      promptUser();
+    });
   } else if (answer.choice === 'Add a role') {
-    roles.addRole();
-    promptUser();
+    roles.addRole()
+    .then(res => {
+      promptUser();
+    });
   } else if (answer.choice === 'Add an employee') {
-    employees.addEmployee();
-    promptUser();
-  } else if (answer.choice ==='Update an employee') {
-    employees.updateEmployee();
-    promptUser();
-  } else if (answer.choice === 'End Session') {
-    db.end();
-  };
-  })
-
+    employees.addEmployee()
+    .then(res => {
+      promptUser();
+    });
+  } else if (answer.choice ==='Update an employee role') {
+    employees.updateEmployee() 
+    .then(res => {
+      promptUser();
+    });
+  } else if (answer.choice === 'End session.'){
+      db.end();
+      process.exit;
+  }})
 };
 
-showDepartments = () => {
-  console.log ('Departments:');
-  const sql = `SELECT department.id AS id, department.name AS department FROM department`;
-  db.query(sql, (err, rows) => {
-      if (err) throw err;
-      console.table(rows); 
-      promptUser(); 
-    })   
-  }
+// Start server after DB connection
+db.connect(err => {
+  if (err) throw err;
+  console.log ("Welcome to the employee tracker database.");
+  promptUser();
+});
 
+  

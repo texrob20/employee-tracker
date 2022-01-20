@@ -1,45 +1,45 @@
+const inquirer = require('inquirer');
 const db = require('../db/connection');
-const promise = require('mysql2/promise');
+const util = require('util');
 const cTable = require('console.table');
-const rtn = require('../server');
+// node native promisify
+const query1 = util.promisify(db.query).bind(db);
 
 async function showDepartments() {
-  console.log ('Departments:');
-  const sql = `SELECT department.id AS id, department.name AS department FROM department`;
-  await promise (db.query(sql, (err, rows) => {
-      if (err) throw err;
-      console.table(rows);  
-    })
-  )
-  .then ((res) => {
-    return;
-  })
-}
-  
+  console.log ('Departments:\n');
+  try {
+    const sql = `SELECT department.id AS id, department.name AS department FROM department`;
+    const rows = await query1(sql);
+    console.table(rows);  
+    console.log(' ');
+  } finally {
+    return true;
+  }
+}  
 
-function addDepartment () {
-  inquirer.prompt ([{
-    type: 'input',
-    message: "Please provide the name of the new department.",
-    name: 'name',
-    validate: function (ans) {
-        if (ans) {
-          return true;
+async function addDepartment () {
+  await inquirer.prompt([
+    {
+      type: 'input', 
+      name: 'name',
+      message: "What department do you want to add?",
+      validate: name => {
+        if (name) {
+            return true;
         } else {
-        return console.log("Please enter a department.");
-        }}
-  }])
-  .then (answer => {
+            console.log('Please enter a department');
+            return false;
+        }
+      }
+    }
+  ])
+  .then(answer => {
     const sql = `INSERT INTO department (name)
                  VALUES (?)`;
-    db.query(sql, answer.name, (err, results) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-    console.log('Added ' + answer.name + ' to departments.');  
-    })
-  })
+    const rows = query1(sql, answer.name);
+    console.log('Added ' + answer.name + " to departments.");  
+    return answer;
+  });
 };
 
 module.exports = {

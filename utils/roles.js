@@ -1,20 +1,25 @@
+const inquirer = require('inquirer');
 const db = require('../db/connection');
+const util = require('util');
 const cTable = require('console.table');
+// node native promisify
+const query1 = util.promisify(db.query).bind(db);
 
-showRoles = () => {
-console.log ('Roles:');
-const sql = 'SELECT * FROM roles';
-db.query(sql, (err, rows) => {
-    if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-    cTable(rows);  
-  })
-}
+async function showRoles() {
+console.log ('Roles:\n');
+try {
+  const sql = 'SELECT * FROM roles';
+  const rows = await query1(sql);
+  console.table(rows);  
+  console.log(' ');
+  } finally {
+    return true;
+  }
+}  
 
-addRole = () => {
-    inquirer.prompt ([{
+async function addRole () {
+    await inquirer.prompt ([
+        {
         type: 'input',
         message: "Please provide the title of the new role.",
         name: 'title',
@@ -23,7 +28,9 @@ addRole = () => {
                 return true;
             } else {
                return console.log("Please enter a title.");
-            }},
+            }
+        }},
+        {
         type: 'input',
         message: "Please provide the salary of the new role.",
         name: 'salary',
@@ -32,41 +39,28 @@ addRole = () => {
                 return true;
             } else {
                 return console.log("Please enter a salary.");
-            }},
+            }
+        }},
+        {
         type: 'input',
-        message: "Please provide the department of the new role.",
-        name: 'department',
+        message: "Please provide the department ID of the new role.",
+        name: 'department_id',
         validate: function (ans) {
             if (ans) {
                 return true;
             } else {
-                return console.log("Please enter a department.");
+                return console.log("Please enter a department ID.");
             }}            
         }])
     .then (answer => {
-      const depts = 'SELECT name, id FROM department';
-      db.promise().query(depts, (err, data) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-      const dept = data.map(({ name, id }) => ({ name: name, value: id }));
-      for (i=0; i<dept.length; i++){
-          if (dept[i].name == answer.department){
-              answer.department_id = dept[i].value;
-          };
-        };   
-      })  
+        console.log(answer.title, answer.salary, answer.department_id);
       const sql = `INSERT INTO roles (title, salary, department_id)
-                 VALUES (?,?,?)`;
-      db.query(sql, answer.title, answer.salaray, answer.department_id, (err, results) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
+                   VALUES (?,?,?)`;
+      const params = [answer.title, answer.salary, answer.department_id];
+      query1(sql, params);
       console.log('Added ' + answer.title + ' to roles.');  
+      return answer;
     })
-  })
 };
 
 module.exports = {showRoles, addRole};
