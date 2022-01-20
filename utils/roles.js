@@ -8,7 +8,9 @@ const query1 = util.promisify(db.query).bind(db);
 async function showRoles() {
 console.log ('Roles:\n');
 try {
-  const sql = 'SELECT * FROM roles';
+  const sql = `SELECT roles.id, roles.title, department.name AS department
+               FROM roles
+               INNER JOIN department ON roles.department_id = department.id`;
   const rows = await query1(sql);
   console.table(rows);  
   console.log(' ');

@@ -8,7 +8,17 @@ const query1 = util.promisify(db.query).bind(db);
 async function showEmployees() {
 console.log ('Employees:');
 try {
-  const sql = 'SELECT * FROM employees';
+    const sql = `SELECT employees.id, 
+    employees.first_name, 
+    employees.last_name, 
+    roles.title, 
+    department.name AS department,
+    roles.salary, 
+    CONCAT (manager.first_name, " ", manager.last_name) AS manager
+    FROM employees
+    LEFT JOIN roles ON employees.role_id = roles.id
+    LEFT JOIN department ON roles.department_id = department.id
+    LEFT JOIN employees manager ON employees.manager_id = manager.id`;
   const rows = await query1(sql);
   console.table(rows);  
   console.log(' ');
