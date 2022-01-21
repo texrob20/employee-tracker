@@ -44,7 +44,9 @@ When the user selects an option, the user is either provided a table of the requ
 
 ## Demo Video
 
-https://github.com/texrob20/employee-tracker/blob/main/demo/employee-tracker-demo.webm or
+https://github.com/texrob20/employee-tracker/blob/main/demo/employee-tracker-demo.webm 
 
-http://watch.screencastify.com/
+or
+
+https://watch.screencastify.com/v/YIqvkejmZvnpNy4LZvKQ
 
