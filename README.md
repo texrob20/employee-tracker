@@ -1,4 +1,4 @@
-## Employee Track
+## Employee Tracker
 
 GIVEN a command-line application that accepts user input:
 
