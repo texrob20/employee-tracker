@@ -14,8 +14,10 @@ async function promptUser () {
     type: 'list',
     message: "Please select which you would like to do.",
     choices: ['View departments', 
+              'View employees by department',
               'View roles', 
-              'View employees', 
+              'View employees',
+              'View employees by manager', 
               'Add a department', 
               'Add a role', 
               'Add an employee', 
@@ -24,6 +26,7 @@ async function promptUser () {
               'Delete a department',
               'Delete a role',
               'Remove an employee',
+              'View department budget',
               'End session.'],
     name: 'choice'
   }])
@@ -34,6 +37,11 @@ async function promptUser () {
     .then(res => {
       promptUser();
     });
+  } else if (answer.choice === 'View employees by department') {
+    dept.departmentEmployees()
+    .then(res => {
+      promptUser();
+    });  
   } else if (answer.choice === 'View roles') {
     roles.showRoles()
     .then(res => {
@@ -44,6 +52,11 @@ async function promptUser () {
     .then(res => {
       promptUser();
     });
+  } else if (answer.choice === 'View employees by manager') {
+    employees.managerEmployees()
+    .then(res => {
+      promptUser();
+    });  
   } else if (answer.choice === 'Add a department') {
     dept.addDepartment()
     .then(res => {
@@ -84,6 +97,11 @@ async function promptUser () {
     .then(res => {
       promptUser();
     });    
+  } else if (answer.choice ==='View department budget') {
+    dept.departmentBudget()
+    .then(res => {
+      promptUser();
+    });   
   } else if (answer.choice === 'End session.'){
       db.end();
       process.exit;  //exits the app

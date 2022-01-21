@@ -69,7 +69,44 @@ async function deleteDepartment () {
   });
 };
 
+// function that displays the current employees by their departments
+async function departmentEmployees() {
+  console.log ('Employees grouped by their departments:\n');
+  try {
+    const sql = `SELECT employees.first_name, employees.last_name, department.name AS department
+                 FROM employees
+                 LEFT JOIN roles ON employees.role_id = roles.id 
+                 LEFT JOIN department ON roles.department_id = department.id
+                 ORDER BY department ASC`;
+    const rows = await query1(sql);
+    console.table(rows);  
+    console.log(' ');
+  } finally {
+    return true;
+  }
+}  
+
+// function that displays the current employees by their departments
+async function departmentBudget() {
+  console.log ('department salary expense for employees:\n');
+  try {
+    const sql = `SELECT department_id AS id, department.name AS department,
+                 SUM(salary) expense
+                 FROM roles
+                 JOIN department ON roles.department_id = department.id                 
+                 GROUP BY department_id
+                 ORDER BY department ASC`;
+    const rows = await query1(sql);
+    console.table(rows);  
+    console.log(' ');
+  } finally {
+    return true;
+  }
+} 
+
 module.exports = {
   showDepartments, 
   addDepartment,
-  deleteDepartment};
+  deleteDepartment,
+  departmentEmployees,
+  departmentBudget};

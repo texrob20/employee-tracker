@@ -164,7 +164,28 @@ async function deleteEmployee () {
   });
 };
 
+// function that displays the current employees by their manager
+async function managerEmployees() {
+    console.log ('Employees grouped by their managers:\n');
+    try {
+        const sql = `SELECT employees.id, employees.first_name, employees.last_name, 
+                     roles.title, department.name AS department, roles.salary,
+                     CONCAT (manager.first_name, " ", manager.last_name) AS manager
+                     FROM employees
+                     LEFT JOIN roles ON employees.role_id = roles.id
+                     LEFT JOIN department ON roles.department_id = department.id
+                     LEFT JOIN employees manager ON employees.manager_id = manager.id
+                     ORDER BY employees.manager_id ASC`;
+      const rows = await query1(sql);
+      console.table(rows);  
+      console.log(' ');
+    } finally {
+      return true;
+    }
+  }  
+
 module.exports = {showEmployees, 
+                  managerEmployees,
                   addEmployee, 
                   updateEmployee,
                   updateManager,
