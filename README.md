@@ -16,9 +16,35 @@ GIVEN a command-line application that accepts user input:
   - Inquirer
   - MySQL2
   - Console.table
+  - util
 - MySQL
 
-## App Functions
+## Database Setup
+The schema and seeds file in the db folder are used to create the company database with 3 tables - department, roles, employees.  The seeds file creates the first 4 departments, 4 roles, and 10 employees.
 
-## Demo
+## Command Line Interface
+Upon starting the server.js app, the user is prompted to select between a number of different options:
+- View departments
+- View employees by department
+- View roles
+- View employees
+- View employees by manager
+- Add a department
+- Add a role
+- Add an employee
+- Update an employee role
+- Update an employee manager
+- Delete a department
+- Delete a role
+- Remove an employee
+- View department budget
+- End session
+
+When the user selects an option, the user is either provided a table of the requested view, an input to add, an input to update, or an option to delete.  When the user selects 'End session', the app is closed and the user is returned to the command prompt.
+
+## Demo Video
+
+https://github.com/texrob20/employee-tracker/blob/main/demo/employee-tracker-demo.webm or
+
+http://watch.screencastify.com/
 
