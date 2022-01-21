@@ -27,4 +27,4 @@ VALUES
   ('Edward', 'Bellamy', 2, 1),
   ('Montague', 'Summers', 4, 3),
   ('Octavia', 'Butler', 7, NULL),
-  ('Unica', 'Zurn', 8, 7);
+  ('Unica', 'Zurn', 8, 9);
